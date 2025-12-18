@@ -36,17 +36,6 @@ class StreamingService(BaseStreamServer):
     def __init__(self, host="0.0.0.0", port=8080):
         super().__init__(host, port)
 
-        # Retrieve the API key from an environment variable or directly insert it.
-        google_maps_api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
-
-        if not google_maps_api_key:
-            # Fallback or direct assignment for testing - NOT RECOMMENDED FOR PRODUCTION
-            # Replace if not using env var
-            google_maps_api_key = "YOUR_GOOGLE_MAPS_API_KEY_HERE"
-            if google_maps_api_key == "YOUR_GOOGLE_MAPS_API_KEY_HERE":
-                print(
-                    "WARNING: GOOGLE_MAPS_API_KEY is not set. Please set it as an environment variable or in the script.")
-
         # Initialize ADK components
         self.agent = Agent(
             name="voice_assistant_agent",
@@ -54,18 +43,6 @@ class StreamingService(BaseStreamServer):
             instruction=SYSTEM_INSTRUCTION,
             tools=[
                 google_search,
-                MCPToolset(
-                    connection_params=StdioServerParameters(
-                        command='npx',
-                        args=[
-                            "-y",
-                            "@modelcontextprotocol/server-google-maps",
-                        ],
-                        env={
-                            "GOOGLE_MAPS_API_KEY": google_maps_api_key
-                        }
-                    ),
-                )
             ],
         )
 

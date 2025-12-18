@@ -6,26 +6,28 @@ import os
 import websockets
 import traceback
 from websockets.exceptions import ConnectionClosed
+from dotenv import load_dotenv
 
 # Set up logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 stream_logger = logging.getLogger(__name__)
 
 
 # Constants
 load_dotenv()
 
+GOOGLE_GENAI_USE_VERTEXAI = os.environ.get("GOOGLE_GENAI_USE_VERTEXAI", "FALSE")
 PROJECT_ID = os.environ.get("PROJECT_ID")
 LOCATION = os.environ.get("LOCATION")
-MODEL = os.environ.get("MODEL")
-VOICE_NAME = os.environ.get("VOICE_NAME")
-GOOGLE_GENAI_USE_VERTEXAI = "FALSE"
+MODEL = os.environ.get("MODEL", "gemini-live-2.5-flash-native-audio")
+VOICE_NAME = os.environ.get("VOICE_NAME", "Puck")
 
 
 # Audio sample rates for input/output
 RECEIVE_SAMPLE_RATE = 24000  # Rate of audio received from Gemini
-SEND_SAMPLE_RATE = 16000     # Rate of audio sent to Gemini
+SEND_SAMPLE_RATE = 16000  # Rate of audio sent to Gemini
 
 # System instruction used by both implementations
 SYSTEM_INSTRUCTION = """
