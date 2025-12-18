@@ -47,6 +47,7 @@
             background-color: #3367d6;
         }
 
+<<<<<<< Updated upstream
         .mic-button-base .mic-icon {
             color: white;
         }
@@ -115,6 +116,44 @@
         #transcript-container::-webkit-scrollbar-thumb:hover {
             background: #4a4e51;
         }
+=======
+      #transcript-container::-webkit-scrollbar-thumb:hover {
+        background: #4a4e51;
+      }
+
+      #ui-content-container::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #ui-content-container::-webkit-scrollbar-track {
+        background: var(--google-light-grey);
+        border-radius: 10px;
+      }
+
+      #ui-content-container::-webkit-scrollbar-thumb {
+        background: var(--google-grey);
+        border-radius: 10px;
+      }
+
+      #ui-content-container::-webkit-scrollbar-thumb:hover {
+        background: #4a4e51;
+      }
+
+      .ui-card {
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+>>>>>>> Stashed changes
     </style>
 </head>
 
@@ -131,6 +170,7 @@
         </div>
     </header>
 
+<<<<<<< Updated upstream
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-3xl">
         <div class="bg-white rounded-2xl p-6 shadow-lg flex flex-col">
             <div id="transcript-container" class="bg-gray-50 rounded-lg p-4 flex-grow h-96 overflow-y-auto">
@@ -143,9 +183,34 @@
                 <div class="audio-wave">
                     <span></span><span></span><span></span><span></span><span></span>
                 </div>
+=======
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Transcript Container -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg flex flex-col">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Conversation</h2>
+          <div
+            id="transcript-container"
+            class="bg-gray-50 rounded-lg p-4 flex-grow h-96 overflow-y-auto"
+          >
+            <div id="transcript" class="space-y-4">
+              <div class="text-gray-500 text-center py-10">
+                Start a conversation to see the transcript.
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="audio-indicator"
+            class="px-4 mt-4 flex justify-center items-center h-10 hidden"
+          >
+            <div class="audio-wave">
+              <span></span><span></span><span></span><span></span><span></span>
+>>>>>>> Stashed changes
             </div>
         </div>
 
+<<<<<<< Updated upstream
         <div class="mt-8">
             <div class="flex flex-col items-center justify-center">
                 <button id="mic-button" class="mic-button-base">
@@ -157,6 +222,19 @@
                 </button>
                 <p id="mic-status" class="text-sm font-medium text-gray-600 mt-3">Click the icon to start recording</p>
             </div>
+=======
+        <!-- UI Content Container -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg flex flex-col">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Information</h2>
+          <div
+            id="ui-content-container"
+            class="bg-gray-50 rounded-lg p-4 flex-grow h-96 overflow-y-auto space-y-4"
+          >
+            <div class="text-gray-500 text-center py-10">
+              Additional information will appear here.
+            </div>
+          </div>
+>>>>>>> Stashed changes
         </div>
     </div>
 
@@ -164,6 +242,7 @@
     <script src="stream_manager.js"></script>
 
     <script>
+<<<<<<< Updated upstream
         // Initialize variables
         const stream = new StreamManager('ws://localhost:8080');
         stream.maxReconnectAttempts = 0;
@@ -175,6 +254,22 @@
         const transcriptOuterContainer = document.getElementById('transcript-container');
         const audioIndicator = document.getElementById('audio-indicator');
         const micIcon = micButton.querySelector('.mic-icon');
+=======
+      // Initialize variables
+      const stream = new StreamManager("ws://localhost:8080");
+      stream.maxReconnectAttempts = 0;
+      let isRecording = false;
+      // DOM elements
+      const micButton = document.getElementById("mic-button");
+      const micStatus = document.getElementById("mic-status");
+      const transcriptContainer = document.getElementById("transcript");
+      const transcriptOuterContainer = document.getElementById(
+        "transcript-container",
+      );
+      const audioIndicator = document.getElementById("audio-indicator");
+      const micIcon = micButton.querySelector(".mic-icon");
+      const uiContentContainer = document.getElementById("ui-content-container");
+>>>>>>> Stashed changes
 
 
         // Function to add message to transcript
@@ -213,14 +308,43 @@
             messageElement.textContent = text;
             messageElement.dataset.partial = isPartial;
 
+<<<<<<< Updated upstream
             if (!isPartial) {
                 delete messageElement.dataset.partial;
             }
 
             transcriptOuterContainer.scrollTop = transcriptOuterContainer.scrollHeight;
+=======
+          stream.onInterrupted = () => {
+            console.log("Stream interrupted");
+            audioIndicator.classList.add("hidden");
+            stream.interrupt();
+            currentResponseText = "";
+            isFirstChunk = true;
+          };
+
+          stream.onUIContentReceived = (data) => {
+            renderContent(data);
+          };
+
+          stream.onUICardReceived = (data) => {
+            renderCard(data);
+          };
+
+          stream.onUIListReceived = (data) => {
+            renderList(data);
+          };
+        } catch (error) {
+          console.error("Failed to initialize stream:", error);
+          updateTranscript(
+            "Sorry, connection failed. Please try again later.",
+            "assistant",
+          );
+>>>>>>> Stashed changes
         }
 
 
+<<<<<<< Updated upstream
         // Microphone button handler
         micButton.addEventListener('click', async () => {
             if (isRecording) {
@@ -326,6 +450,100 @@
         window.addEventListener('beforeunload', () => {
             stream.closeConnection();
         });
+=======
+      // Render functions for UI components
+      function renderContent(data) {
+        const placeholder = uiContentContainer.querySelector(
+          ".text-gray-500.text-center.py-10",
+        );
+        if (placeholder) {
+          placeholder.remove();
+        }
+
+        const contentElement = document.createElement("div");
+        contentElement.className =
+          "bg-white rounded-lg p-4 shadow-sm border border-gray-200 ui-card";
+        contentElement.innerHTML = `
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">${escapeHtml(
+            data.title || "Information",
+          )}</h3>
+          <p class="text-gray-700 whitespace-pre-wrap">${escapeHtml(
+            data.content || "",
+          )}</p>
+        `;
+        uiContentContainer.appendChild(contentElement);
+        uiContentContainer.scrollTop = uiContentContainer.scrollHeight;
+      }
+
+      function renderCard(data) {
+        const placeholder = uiContentContainer.querySelector(
+          ".text-gray-500.text-center.py-10",
+        );
+        if (placeholder) {
+          placeholder.remove();
+        }
+
+        const cardElement = document.createElement("div");
+        cardElement.className =
+          "bg-white rounded-lg p-5 shadow-md border border-gray-200 ui-card";
+        let footerHtml = "";
+        if (data.footer) {
+          footerHtml = `<div class="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">${escapeHtml(
+            data.footer,
+          )}</div>`;
+        }
+        cardElement.innerHTML = `
+          <h3 class="text-xl font-bold text-gray-800 mb-3">${escapeHtml(
+            data.title || "Card",
+          )}</h3>
+          <div class="text-gray-700 whitespace-pre-wrap mb-3">${escapeHtml(
+            data.content || "",
+          )}</div>
+          ${footerHtml}
+        `;
+        uiContentContainer.appendChild(cardElement);
+        uiContentContainer.scrollTop = uiContentContainer.scrollHeight;
+      }
+
+      function renderList(data) {
+        const placeholder = uiContentContainer.querySelector(
+          ".text-gray-500.text-center.py-10",
+        );
+        if (placeholder) {
+          placeholder.remove();
+        }
+
+        const listElement = document.createElement("div");
+        listElement.className =
+          "bg-white rounded-lg p-4 shadow-sm border border-gray-200 ui-card";
+        const itemsHtml = (data.items || [])
+          .map(
+            (item) =>
+              `<li class="mb-2 text-gray-700">${escapeHtml(item)}</li>`,
+          )
+          .join("");
+        listElement.innerHTML = `
+          <h3 class="text-lg font-semibold text-gray-800 mb-3">${escapeHtml(
+            data.title || "List",
+          )}</h3>
+          <ul class="list-disc list-inside space-y-1">${itemsHtml}</ul>
+        `;
+        uiContentContainer.appendChild(listElement);
+        uiContentContainer.scrollTop = uiContentContainer.scrollHeight;
+      }
+
+      // Utility function to escape HTML
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Add unload handler
+      window.addEventListener("beforeunload", () => {
+        stream.closeConnection();
+      });
+>>>>>>> Stashed changes
     </script>
 </body>
 
