@@ -89,10 +89,10 @@ We use an `asyncio.TaskGroup` to run multiple tasks concurrently, ensuring we ca
 async with asyncio.TaskGroup() as tg:
     # Task 1: Listens for audio messages from the browser client
     tg.create_task(receive_client_messages(), name="ClientMessageReceiver")
-    
+
     # Task 2: Sends audio from the client to the Gemini service
     tg.create_task(send_audio_to_service(), name="AudioSender")
-    
+
     # Task 3: Listens for responses from the Gemini service
     tg.create_task(receive_service_responses(), name="ServiceResponseReceiver")
 ```
@@ -118,7 +118,7 @@ async for event in runner.run_live(...):
             if hasattr(part, "text") and part.text:
                 if "partial=True" in event_str: # Check for streaming chunks
                     await websocket.send(json.dumps({"type": "text", "data": part.text}))
-    
+
     # Let the client know when the model is done with its turn
     if event.turn_complete:
         await websocket.send(json.dumps({"type": "turn_complete"}))
